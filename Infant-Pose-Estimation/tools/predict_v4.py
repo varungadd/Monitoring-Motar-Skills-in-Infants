@@ -73,25 +73,26 @@ preds, maxvals = get_max_preds(keypoints_heatmap)
 keypoints = preds[0]  # Taking the keypoints for the first (and only) image
 
 
-def visualize_keypoints(image_path, keypoints, output_path):
+def visualize_keypoints(image_path, keypoints, output_path, input_size):
     image = cv2.imread(image_path)
     h, w, _ = image.shape
-    input_size = config['MODEL']['IMAGE_SIZE']
 
     # Scale keypoints to the original image size
     keypoints[:, 0] *= (w / input_size[1])
     keypoints[:, 1] *= (h / input_size[0])
 
     for joint in keypoints:
-        cv2.circle(image, (int(joint[0]), int(joint[1])), 2, [255, 0, 0], 2)
+        if joint[0] >= 0 and joint[1] >= 0:  # Only draw valid keypoints
+            cv2.circle(image, (int(joint[0]), int(joint[1])), 9, [255, 0, 0], 2)
     cv2.imwrite(output_path, image)
 
+
 output_path = 'annotated_image.jpg'
-visualize_keypoints(image_path, keypoints, output_path)
+visualize_keypoints(image_path, keypoints, output_path, input_size)
 
 
 
-keypoints = keypoints_output[0].cpu().numpy()  # Assuming the output is of shape [1, num_joints, 3]
-keypoints = keypoints[:, :2]  # Extracting x, y coordinates
-output_path = 'annotated_image.jpg'
-visualize_keypoints(image_path, keypoints, output_path)
+# keypoints = keypoints_output[0].cpu().numpy()  # Assuming the output is of shape [1, num_joints, 3]
+# keypoints = keypoints[:, :2]  # Extracting x, y coordinates
+# output_path = 'annotated_image.jpg'
+# visualize_keypoints(image_path, keypoints, output_path)

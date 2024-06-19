@@ -93,7 +93,7 @@ def get_final_preds(config, hm, center, scale):
     heatmap_width = hm.shape[3]
 
     # post-processing
-    hm = gaussian_blur(hm, config.TEST.BLUR_KERNEL)
+    hm = gaussian_blur(hm, config['TEST']['BLUR_KERNEL'])
     hm = np.maximum(hm, 1e-10)
     hm = np.log(hm)
     for n in range(coords.shape[0]):
