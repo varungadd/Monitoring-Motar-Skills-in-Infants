@@ -8,6 +8,7 @@ from core.function import validate_feature
 from core.inference import get_final_preds, get_max_preds
 from models.adaptive_pose_hrnet import get_adaptive_pose_net
 from utils.vis import save_batch_image_with_joints
+import argparse
 
 def calculate_center_scale(image, config):
     height, width = config['MODEL']['IMAGE_SIZE']
@@ -93,12 +94,14 @@ def process_video(video_path, output_path, model, config):
     out.release()
     cv2.destroyAllWindows()
 
-def main():
+def main(video_path):
     config_file = 'experiments/coco/hrnet/w48_384x288_adam_lr1e-3_infant.yaml'  # Update this path
-    video_path = 'video.mov'
     output_path = 'output_video.mp4'
     model, cfg = load_model(config_file)
     process_video(video_path, output_path, model, cfg)
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--video', type=str, help='Path to the video file')
+    args = parser.parse_args()
+    main(args.video)
