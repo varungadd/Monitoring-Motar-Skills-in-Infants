@@ -92,12 +92,14 @@ def main():
     if cfg.TEST.MODEL_FILE:
         logger.info('=> loading model from {}'.format(cfg.TEST.MODEL_FILE))
         model_p.load_state_dict(torch.load(cfg.TEST.MODEL_FILE), strict=False)
+        print("Model file:", cfg.TEST.MODEL_FILE)
     else:
         model_state_file = os.path.join(
             final_output_dir, 'final_state.pth'
         )
         logger.info('=> loading model from {}'.format(model_state_file))
         model_p.load_state_dict(torch.load(model_state_file))
+        print("Model state file:", model_state_file)
 
     model_p = torch.nn.DataParallel(model_p, device_ids=cfg.GPUS).cuda()
 

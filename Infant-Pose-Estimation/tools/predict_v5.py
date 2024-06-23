@@ -68,7 +68,7 @@ def predict_on_single_image(image_path, model, config):
         joints_vis = np.ones((preds.shape[1], 1), dtype=np.float32)  # Assuming all joints are visible
         print(image.shape, preds.shape, joints_vis.shape)
         print(image.size(0))
-        save_batch_image_with_joints(image, preds*4, joints_vis, 'out2.jpg', config)
+        save_batch_image_with_joints(batch_image=image, batch_joints=preds*4, batch_joints_vis=joints_vis, file_name='out2.jpg')
         # visualize_keypoints(image[0], preds[0]*4, joints_vis, 'output_pred.jpg', config)
 
 # Main function to run the prediction
