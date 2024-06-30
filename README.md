@@ -14,3 +14,21 @@ To use this project, follow these steps:
 2. Install the required dependencies as mentioned in the repository's README.
 3. Copy the contents of the `Infant-Pose-Estimation` folder from this project into the cloned repository.
 
+
+## Additional Scripts
+
+Use these scripts to download the models and dataset. This also organizes them into specific folders.
+
+```python
+python Infant-Pose-Estimation/download_pretrained_fidip.py
+```
+
+```python
+python Infant-Pose-Estimation/download_pretrained_hrnet.py
+```
+
+```python
+python Infant-Pose-Estimation/download_syrip_data.py
+```
+#### Run the model
+To run the model on a single picture use `Infant-Pose-Estimation/tools/predict_v6.py` and to run model on videos use `Infant-Pose-Estimation/tools/predict_video_v2.py`
