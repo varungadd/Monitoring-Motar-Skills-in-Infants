@@ -16,6 +16,7 @@ import os
 
 import numpy as np
 import torch
+import cv2
 
 from core.evaluate import accuracy
 from core.inference import get_final_preds
@@ -492,7 +493,13 @@ def validate_feature(config, val_loader, val_dataset, model_p, criterion_p, outp
             else:
                 img_label.append(2)
             # compute output
+            print("Image shape: ", input.shape)
+            if (i==0):
+                np.save("input.npy", input[7].cpu().numpy())
+                cv2.imwrite("out4.jpg", input[7].mul(255).clamp(0, 255).byte().permute(1, 2, 0).cpu().numpy())
             feature_outputs, outputs = model_p(input)
+            # print("Feature outputs shape: ", feature_outputs.shape)
+            # print("Output shape: ", outputs.shape)
             
             if isinstance(outputs, list):
                 output = outputs[-1]
@@ -506,23 +513,24 @@ def validate_feature(config, val_loader, val_dataset, model_p, criterion_p, outp
             else:
                 feature_array = np.concatenate((feature_array,feature_output.cpu().numpy()))
 
-            if config.TEST.FLIP_TEST:
-                # this part is ugly, because pytorch has not supported negative index
-                # input_flipped = model(input[:, :, :, ::-1])
-                input_flipped = np.flip(input.cpu().numpy(), 3).copy()
-                input_flipped = torch.from_numpy(input_flipped).cuda()
-                feature_outputs_flipped, outputs_flipped = model_p(input_flipped)
+                # cv2.imwrite("out3.jpg", input[7].mul(255).clamp(0, 255).byte().permute(1, 2, 0).cpu().numpy())
+            # if config.TEST.FLIP_TEST:
+            #     # this part is ugly, because pytorch has not supported negative index
+            #     # input_flipped = model(input[:, :, :, ::-1])
+            #     input_flipped = np.flip(input.cpu().numpy(), 3).copy()
+            #     input_flipped = torch.from_numpy(input_flipped).cuda()
+            #     feature_outputs_flipped, outputs_flipped = model_p(input_flipped)
 
-                if isinstance(outputs_flipped, list):
-                    output_flipped = outputs_flipped[-1]
-                else:
-                    output_flipped = outputs_flipped           
+            #     if isinstance(outputs_flipped, list):
+            #         output_flipped = outputs_flipped[-1]
+            #     else:
+            #         output_flipped = outputs_flipped           
                 
-                output_flipped = flip_back(output_flipped.cpu().numpy(),
-                                           val_dataset.flip_pairs)
-                output_flipped = torch.from_numpy(output_flipped.copy()).cuda()
+            #     output_flipped = flip_back(output_flipped.cpu().numpy(),
+            #                                val_dataset.flip_pairs)
+            #     output_flipped = torch.from_numpy(output_flipped.copy()).cuda()
 
-                output = (output + output_flipped) * 0.5
+            #     output = (output + output_flipped) * 0.5
 
             target = target.cuda(non_blocking=True)
             target_weight = target_weight.cuda(non_blocking=True)
@@ -534,8 +542,13 @@ def validate_feature(config, val_loader, val_dataset, model_p, criterion_p, outp
             losses.update(loss.item(), num_images)
             _, avg_acc, cnt, pred = accuracy(output.cpu().numpy(),
                                              target.cpu().numpy())
-
+            if (i==0):
+                print("Pred shape:", pred.shape)
+                print("Pred value:", pred[7])
+            
             acc.update(avg_acc, cnt)
+            if(i==0):
+                print("pred value: ", pred[7])
 
             # measure elapsed time
             batch_time.update(time.time() - end)
@@ -547,7 +560,10 @@ def validate_feature(config, val_loader, val_dataset, model_p, criterion_p, outp
 
             preds, maxvals = get_final_preds(
                 config, output.clone().cpu().numpy(), c, s)
-
+            # if(i==0):
+            #     print("Preds: ", preds[7])
+            #     print("Maxvals: ", maxvals[7])
+            
             all_preds[idx:idx + num_images, :, 0:2] = preds[:, :, 0:2]
             all_preds[idx:idx + num_images, :, 2:3] = maxvals
             # double check this all_boxes parts
@@ -573,6 +589,7 @@ def validate_feature(config, val_loader, val_dataset, model_p, criterion_p, outp
                     os.mkdir(output_dir_val)
                 
                 prefix = '{}_{}'.format(os.path.join(output_dir_val, 'val'), i)
+                # print("Meta keys:", meta.keys())
                 save_debug_images(config, input, meta, target, pred*4, output,
                                   prefix)
 

@@ -18,19 +18,30 @@ from core.inference import get_max_preds
 
 
 def save_batch_image_with_joints(batch_image, batch_joints, batch_joints_vis,
-                                 file_name, nrow=8, padding=2):
+                                 file_name, nrow:int=8, padding=2):
     '''
     batch_image: [batch_size, channel, height, width]
     batch_joints: [batch_size, num_joints, 3],
     batch_joints_vis: [batch_size, num_joints, 1],
     }
     '''
+    print("batch_image.shape:", batch_image.shape)
+    print("batch_joints.shape:", batch_joints.shape)
+    print("batch_joints_vis.shape:", batch_joints_vis.shape)
     grid = torchvision.utils.make_grid(batch_image, nrow, padding, True)
     ndarr = grid.mul(255).clamp(0, 255).byte().permute(1, 2, 0).cpu().numpy()
     ndarr = ndarr.copy()
-
-    nmaps = batch_image.size(0)
-    xmaps = min(nrow, nmaps)
+    nmaps = int(batch_image.size(0))
+    if (nmaps > 1):
+        print("batch_joints:", batch_joints[7])
+        # Save or display the 8th image in the batch
+        cv2.imwrite("out3.jpg", batch_image[7].mul(255).clamp(0, 255).byte().permute(1, 2, 0).cpu().numpy())
+    else:
+        print("batch_joints:", batch_joints)
+    if isinstance(nrow, int) and isinstance(nmaps, int):
+        xmaps = min(nrow, nmaps)
+    else:
+        raise ValueError('nrow must be integer and nmaps must be integer')
     ymaps = int(math.ceil(float(nmaps) / xmaps))
     height = int(batch_image.size(2) + padding)
     width = int(batch_image.size(3) + padding)
