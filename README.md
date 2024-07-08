@@ -66,6 +66,7 @@ This script simplifies the process of obtaining multiple pre-trained models, ens
 
 #### Run the model
 - To run the model on a single picture use `Infant-Pose-Estimation/tools/predict_v6.py`.
+
 This script performs pose estimation on a single image using a pre-trained model.
 
 Load Model: Loads the pre-trained model for pose estimation.
@@ -75,6 +76,7 @@ Visualize Results: Draws the predicted keypoints on the image and saves the outp
 This script is useful for applying pose estimation to individual images and visualizing the results.
 
 - To run model on videos use `Infant-Pose-Estimation/tools/predict_video_v2.py`
+  
 This script performs pose estimation on a video file using a pre-trained model.
 
 Load Model: Loads the pre-trained model for pose estimation.
