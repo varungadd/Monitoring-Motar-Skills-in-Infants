@@ -1,6 +1,6 @@
-# Monitoring Motor Skills in Infants
+# Monitoring Motor Skills in Infant
 
-This project aims to monitor the motor skills in infants using Infant Pose Estimation.
+This project features to monitor the motor skills in infants using Infant Pose Estimation.
 
 ## Introduction
 
